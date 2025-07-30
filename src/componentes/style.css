@@ -1,0 +1,99 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    height: 100vh;
+}
+
+.FundoAzul {
+    background: linear-gradient(20deg, rgb(5, 0, 80), rgb(0, 32, 138));
+}
+.containerInput {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    gap: 2rem;
+    width: 40%;
+    background-color: rgb(236, 236, 236);
+
+    margin: 2rem;
+}
+
+input {
+    border: none;
+    outline: none;
+    padding: 1rem;
+    width: 30vw;
+    border-radius: 0.5rem;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    padding: 1rem;
+    width: 30vw;
+    border-radius: 0.5rem;
+    background-color: rgb(5, 0, 80);
+    color: white;
+}
+
+.containerResult {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    width: 40%;
+    color: rgb(255, 255, 255);
+    background-color: rgba(194, 194, 194, 0.3);
+    box-shadow: 5px 5px 5px rgba(49, 49, 49, 0.4);
+}
+
+.containerTemperatura {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row-reverse;
+}
+
+.header_containerResult {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: rgb(252, 252, 252);
+}
+
+.textData {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: rgb(211, 211, 211);
+    margin-top: 2rem;
+}
+
+.textTemperatura {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: rgb(252, 252, 252);
+}
+
+span {
+    font-weight: 400;
+    color: rgb(211, 211, 211);
+}
+
+p {
+    margin-top: 1rem;
+}
+
+.textError {
+    color: rgb(173, 0, 0);
+}
