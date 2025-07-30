@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import './style.css';
 import { format } from "date-fns";
@@ -27,19 +27,23 @@ export function Clima() {
     const [cidade, setCidade] = useState("");
     const [temperatura, setTemperatura] = useState <number | null>();
     const [nome_cidade, setNome_cidade] = useState("");
+    const [descricao, setDescricao] = useState<string | null>();
     const [umidade, setUmidade] = useState<number | null>();
     const [velocidadeVento, setVelocidadeVento] = useState<number | null>();
     const [sensacaoTermica, setSensacaoTermica] = useState<number | null>();
     const [ultimaAtualizacao, setUltimaAtualizacao] = useState("");
     const [data, setData] = useState("");
     const [icon, setIcon] = useState<string | null>();
-    const [texto, setTexto] = useState<string | null>();
     const [erro, setErro] = useState("");
+
+    const [isLoading, setIsLoading] = useState(false);
 
     async function buscarClima() {
         if (!cidade) return;
 
         try {
+            setIsLoading(true);
+
             const apiKey = 'b3d53c5b46a54120897161645252907';
             const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${cidade}&lang=pt`;
 
@@ -59,26 +63,54 @@ export function Clima() {
             setUltimaAtualizacao(dataFormatadaAtualizada);
             setData(dataFormatadaAtual);
             setIcon(resposta.data.current.condition.icon);
-            setTexto(resposta.data.current.condition.text);
-            
+            setDescricao(resposta.data.current.condition.text);            
             setErro('');
+
         } catch {
             setErro('Cidade não encontrada');
             setTemperatura(null);
             setNome_cidade("");
+        } finally {
+            setIsLoading(false);
         }
+
     }
 
     return(
-        <main {...texto == "Sol" && (
-            {className: "FundoAzul"}
-        )} >
+        <main {...descricao === "Sol" ? (
+                {className: "FundoDescricaoSol"}
+            ) : (
+                {className: "FundoAzul"}
+            )} 
+            {...descricao === "Possibilidade de chuva irregular" && (
+                {className: "FundoDescricaoChuva"}
+            )}
+            {...descricao === "Parcialmente nublado" && (
+                {className: "FundoDescricaoParcialmenteNublado"}
+            )}
+            {...descricao === "Nublado" && (
+                {className: "FundoNublado"}
+            )}
+            {...descricao === "Neblina" && (
+                {className: "FundoNeblina"}
+            )}
+            {...descricao === "Chuva fraca" && (
+                {className: "FundoDescricaoChuvaFraca"}
+            )}
+            {...descricao === "Céu limpo" && (
+                {className: "FundoCeuLimpo"}
+            )}
+        >
             <section className="containerInput">
 
-                <h2>Temperatura</h2>
+                <div className="containerText">
+                    <h1>Clima Tempo</h1>
+                    <p>Busque o clima da sua cidade</p>
+                </div>
+
                 <input 
                     type="text" 
-                    placeholder="Digita a cidade aí" 
+                    placeholder="Digite a cidade que deseja buscar" 
                     value={cidade} 
                     onChange={(e) => setCidade(e.target.value)}
                 />
@@ -86,33 +118,37 @@ export function Clima() {
 
             </section>
 
-            <section className="containerResult">
+            {isLoading ? (
+                <p className="textLoading">Carregando...</p>
+            ) : (
+                <section className="containerResult">
 
-                {temperatura && (
-                    <div>
-                        <div className="header_containerResult">
-                            <h2>{nome_cidade}</h2>
-                            <div className="containerTemperatura">
-                                <img src={icon!} alt="Icone do clima"/>
-                                <p className="textTemperatura">{temperatura}°C</p>
+                    {temperatura && (
+                        <div>
+                            <div className="header_containerResult">
+                                <h2>{nome_cidade}</h2>
+                                <div className="containerTemperatura">
+                                    <img src={icon!} alt="Icone do clima"/>
+                                    <p className="textTemperatura">{temperatura}°C</p>
+                                </div>
+                            </div>
+                            <p><span>Umidade: </span>{umidade}%</p>
+                            <p><span>Velocidade do vento: </span>{velocidadeVento} km</p>
+                            <p><span>Sensação térmica: </span>{sensacaoTermica}°C</p>
+                            <p><span>Condição: </span>{descricao}</p>
+                            <div className="textData">
+                                <p>{data}</p>
+                                <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
                             </div>
                         </div>
-                        <p><span>Umidade: </span>{umidade}%</p>
-                        <p><span>Velocidade do vento: </span>{velocidadeVento} km</p>
-                        <p><span>Sensação térmica: </span>{sensacaoTermica}°C</p>
-                        <p><span>Condição: </span>{texto}</p>
-                        <div className="textData">
-                            <p>{data}</p>
-                            <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
-                        </div>
-                    </div>
-                )}
+                    )}
 
-                {erro && 
-                    <p className="textError">{erro}</p>
-                }
-                
-            </section>
+                    {erro && 
+                        <p className="textError">{erro}</p>
+                    }
+                    
+                </section>
+            )}
 
         </main>
     )
