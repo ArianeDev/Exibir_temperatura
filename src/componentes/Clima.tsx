@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import './style.css';
 import { format } from "date-fns";
+import Loader from "./loader";
 
 // Duas formas de criar = interface e type
 interface WeatherResponse {
@@ -37,8 +38,10 @@ export function Clima() {
     const [erro, setErro] = useState("");
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isCidade, setIsCidade] = useState(false);
 
     async function buscarClima() {
+
         if (!cidade) return;
 
         try {
@@ -54,7 +57,7 @@ export function Clima() {
 
             const dataUltimaAtualizacao = resposta.data.current.last_updated;
             const dataFormatadaAtualizada = format(dataUltimaAtualizacao, 'dd/MM/yyyy HH:mm');
-
+            
             setNome_cidade(resposta.data.location.name);
             setTemperatura(resposta.data.current.temp_c);
             setUmidade(resposta.data.current.humidity);
@@ -65,6 +68,8 @@ export function Clima() {
             setIcon(resposta.data.current.condition.icon);
             setDescricao(resposta.data.current.condition.text);            
             setErro('');
+
+            setIsCidade(true);
 
         } catch {
             setErro('Cidade não encontrada');
@@ -101,53 +106,63 @@ export function Clima() {
                 {className: "FundoCeuLimpo"}
             )}
         >
-            <section className="containerInput">
 
-                <div className="containerText">
-                    <h1>Clima Tempo</h1>
-                    <p>Busque o clima da sua cidade</p>
-                </div>
+            {!isCidade ? (
+                <section className="containerInput">
+                    <div className="containerText">
+                        <h1>Clima Tempo</h1>
+                        <p>Busque o clima da sua cidade</p>
+                    </div>
 
-                <input 
-                    type="text" 
-                    placeholder="Digite a cidade que deseja buscar" 
-                    value={cidade} 
-                    onChange={(e) => setCidade(e.target.value)}
-                />
-                <button onClick={buscarClima}>Buscar</button>
-
-            </section>
-
-            {isLoading ? (
-                <p className="textLoading">Carregando...</p>
-            ) : (
-                <section className="containerResult">
-
-                    {temperatura && (
-                        <div>
-                            <div className="header_containerResult">
-                                <h2>{nome_cidade}</h2>
-                                <div className="containerTemperatura">
-                                    <img src={icon!} alt="Icone do clima"/>
-                                    <p className="textTemperatura">{temperatura}°C</p>
-                                </div>
-                            </div>
-                            <p><span>Umidade: </span>{umidade}%</p>
-                            <p><span>Velocidade do vento: </span>{velocidadeVento} km</p>
-                            <p><span>Sensação térmica: </span>{sensacaoTermica}°C</p>
-                            <p><span>Condição: </span>{descricao}</p>
-                            <div className="textData">
-                                <p>{data}</p>
-                                <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    {erro && 
-                        <p className="textError">{erro}</p>
-                    }
-                    
+                    <input 
+                        type="text" 
+                        placeholder="Digite a cidade que deseja buscar" 
+                        value={cidade} 
+                        onChange={(e) => setCidade(e.target.value)}
+                        onKeyDown={(e) => {if (e.key === 'Enter')  buscarClima();}}
+                    />
+                    <button onClick={buscarClima}>Buscar</button>
                 </section>
+
+            ) : (
+                <>
+                    {isLoading ? (
+                        <Loader />
+                    ) : (
+                        <>
+                        
+                            <section className="containerResult">
+            
+                                {temperatura && (
+                                    <div>
+                                        <div className="header_containerResult">
+                                            <h2>{nome_cidade}</h2>
+                                            <div className="containerTemperatura">
+                                                <img src={icon!} alt="Icone do clima"/>
+                                                <p className="textTemperatura">{temperatura}°</p>
+                                            </div>
+                                        </div>
+                                        <p><span>Umidade: </span>{umidade}%</p>
+                                        <p><span>Velocidade do vento: </span>{velocidadeVento} km</p>
+                                        <p><span>Sensação térmica: </span>{sensacaoTermica}°C</p>
+                                        <p><span>Condição: </span>{descricao}</p>
+                                        <div className="textData">
+                                            <p>{data}</p>
+                                            <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
+                                        </div>
+                                    </div>
+                                )}
+            
+                                {erro && 
+                                    <p className="textError">{erro}</p>
+                                }
+                            </section>
+                            <section>
+                                
+                            </section>
+                        </>
+                    )}
+                </>
             )}
 
         </main>
