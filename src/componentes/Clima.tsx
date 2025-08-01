@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import './style.css';
 import { format } from "date-fns";
+import { Droplet, MapPin, Wind, SunMedium } from "lucide-react";
+import { Card } from "./Card";
 
 // Duas formas de criar = interface e type
 interface WeatherResponse {
@@ -35,13 +37,34 @@ export function Clima() {
     const [data, setData] = useState("");
     const [icon, setIcon] = useState<string | null>();
     const [erro, setErro] = useState("");
+    const [iconDescricao, setIconDescricao] = useState();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isCidade, setIsCidade] = useState(false);
+
+    const listCard = [
+        {
+            titulo: "Umidade",
+            icon: <Droplet />,
+            descricao: `${umidade}%`
+        },
+        {
+            titulo: "Velocidade do vento",
+            icon: <Wind />,
+            descricao: `${velocidadeVento}km/h`
+        },
+        {
+            titulo: "Condição do clima",
+            icon: <Droplet />,
+            descricao: `${descricao}`
+        },
+    ]
 
     async function buscarClima() {
         if (!cidade) return;
 
         try {
+            setIsCidade(true);
             setIsLoading(true);
 
             const apiKey = 'b3d53c5b46a54120897161645252907';
@@ -76,6 +99,10 @@ export function Clima() {
 
     }
 
+    if (descricao == "Sol") {
+        setIconDescricao(<SunMedium />);
+    }
+
     return(
         <main {...descricao === "Sol" ? (
                 {className: "FundoDescricaoSol"}
@@ -101,55 +128,68 @@ export function Clima() {
                 {className: "FundoCeuLimpo"}
             )}
         >
-            <section className="containerInput">
 
-                <div className="containerText">
-                    <h1>Clima Tempo</h1>
-                    <p>Busque o clima da sua cidade</p>
-                </div>
+            {!isCidade && (
+                <section className="containerInput">
 
-                <input 
-                    type="text" 
-                    placeholder="Digite a cidade que deseja buscar" 
-                    value={cidade} 
-                    onChange={(e) => setCidade(e.target.value)}
-                />
-                <button onClick={buscarClima}>Buscar</button>
+                    <div className="containerText">
+                        <h1>Clima Tempo</h1>
+                        <p>Busque o clima da sua cidade</p>
+                    </div>
 
-            </section>
+                    <input 
+                        type="text" 
+                        placeholder="Digite a cidade que deseja buscar" 
+                        value={cidade} 
+                        onChange={(e) => setCidade(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') buscarClima();}}                        
+                    />
+                    <button onClick={buscarClima}>Buscar</button>
 
-            {isLoading ? (
-                <p className="textLoading">Carregando...</p>
-            ) : (
-                <section className="containerResult">
-
-                    {temperatura && (
-                        <div>
-                            <div className="header_containerResult">
-                                <h2>{nome_cidade}</h2>
-                                <div className="containerTemperatura">
-                                    <img src={icon!} alt="Icone do clima"/>
-                                    <p className="textTemperatura">{temperatura}°C</p>
-                                </div>
-                            </div>
-                            <p><span>Umidade: </span>{umidade}%</p>
-                            <p><span>Velocidade do vento: </span>{velocidadeVento} km</p>
-                            <p><span>Sensação térmica: </span>{sensacaoTermica}°C</p>
-                            <p><span>Condição: </span>{descricao}</p>
-                            <div className="textData">
-                                <p>{data}</p>
-                                <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    {erro && 
-                        <p className="textError">{erro}</p>
-                    }
-                    
                 </section>
             )}
 
+            {isCidade && (
+                <>
+                    {isLoading ? (
+                        <p className="textLoading">Carregando...</p>
+                    ) : (
+                        <>
+                            <section className="containerResult">
+            
+                                {temperatura && (
+                                    <div>
+                                        <div className="header_containerResult">
+                                            <div className="containerTemperatura_header">
+                                                <h2>{nome_cidade}</h2>
+                                                <MapPin className="icon_MapPin"/>
+                                            </div>
+                                            <div className="containerTemperatura">
+                                                <img src={icon!} alt="Icone do clima"/>
+                                                <p className="textTemperatura">{temperatura}°</p>
+                                            </div>
+                                        </div>
+                                        <p><span>Sensação térmica: </span>{sensacaoTermica}°</p>
+                                        <p><span>Condição: </span>{descricao}</p>
+                                        <div className="textData">
+                                            <p>{data}</p>
+                                            <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
+                                        </div>
+                                    </div>
+                                )}
+            
+                                {erro && 
+                                    <p className="textError">{erro}</p>
+                                }
+                                
+                            </section>
+                            <section className="containerCard">
+                                <Card list={listCard} />
+                            </section>
+                        </>
+                    )}
+                </>
+            )}
         </main>
     )
 }

@@ -1,6 +1,7 @@
 main {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     gap: 1rem;
     height: 100vh;
@@ -11,7 +12,7 @@ main {
 }
 
 .FundoDescricaoSol {
-    background: linear-gradient(20deg, rgba(190, 152, 2, 0.788), rgb(221, 162, 0));
+    background: linear-gradient(20deg, rgba(175, 140, 1, 0.5), rgba(194, 142, 0, 0.863));
 }
 
 .FundoDescricaoChuva {
@@ -69,7 +70,7 @@ main {
 
 input {
     border: none;
-    border-bottom: 1px solid rgb(5, 0, 80);
+    border-bottom: 2px solid rgb(5, 0, 80);
     outline: none;
     padding: 1rem;
     width: 30vw;
@@ -84,8 +85,13 @@ button {
     border-radius: 0.5rem;
     background-color: rgb(5, 0, 80);
     color: white;
+
+    &:hover {
+        background-color: rgb(2, 0, 50);
+    }
 }
 
+/* Layout informações d cidade */
 .containerResult {
     display: flex;
     flex-direction: column;
@@ -95,6 +101,15 @@ button {
     color: rgb(255, 255, 255);
     background-color: rgba(194, 194, 194, 0.3);
     box-shadow: 5px 5px 5px rgba(49, 49, 49, 0.4);
+}
+
+.containerTemperatura_header {
+    display: flex;
+}
+
+.icon_MapPin {
+    width: 1rem;
+    height: 1rem;
 }
 
 .containerTemperatura {
@@ -142,4 +157,12 @@ p {
 
 .textError {
     color: rgb(173, 0, 0);
+}
+
+/* Card */
+.containerCard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40%, 2fr));
+    gap: 1rem;;
+    width: 40%;
 }
