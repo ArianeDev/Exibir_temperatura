@@ -14,7 +14,8 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.536.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

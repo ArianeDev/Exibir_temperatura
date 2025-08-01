@@ -4,6 +4,7 @@ import './style.css';
 import { format } from "date-fns";
 import { Droplet, MapPin, Wind, SunMedium } from "lucide-react";
 import { Card } from "./Card";
+import Loader from "./loader";
 
 // Duas formas de criar = interface e type
 interface WeatherResponse {
@@ -61,6 +62,7 @@ export function Clima() {
     ]
 
     async function buscarClima() {
+
         if (!cidade) return;
 
         try {
@@ -77,7 +79,7 @@ export function Clima() {
 
             const dataUltimaAtualizacao = resposta.data.current.last_updated;
             const dataFormatadaAtualizada = format(dataUltimaAtualizacao, 'dd/MM/yyyy HH:mm');
-
+            
             setNome_cidade(resposta.data.location.name);
             setTemperatura(resposta.data.current.temp_c);
             setUmidade(resposta.data.current.humidity);
@@ -88,6 +90,8 @@ export function Clima() {
             setIcon(resposta.data.current.condition.icon);
             setDescricao(resposta.data.current.condition.text);            
             setErro('');
+
+            setIsCidade(true);
 
         } catch {
             setErro('Cidade não encontrada');
@@ -128,26 +132,6 @@ export function Clima() {
                 {className: "FundoCeuLimpo"}
             )}
         >
-
-            {!isCidade && (
-                <section className="containerInput">
-
-                    <div className="containerText">
-                        <h1>Clima Tempo</h1>
-                        <p>Busque o clima da sua cidade</p>
-                    </div>
-
-                    <input 
-                        type="text" 
-                        placeholder="Digite a cidade que deseja buscar" 
-                        value={cidade} 
-                        onChange={(e) => setCidade(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') buscarClima();}}                        
-                    />
-                    <button onClick={buscarClima}>Buscar</button>
-
-                </section>
-            )}
 
             {isCidade && (
                 <>
