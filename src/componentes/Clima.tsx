@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import './style.css';
 import { format } from "date-fns";
-import { Droplet, MapPin, Wind, SunMedium } from "lucide-react";
+import { Droplet, MapPin, Wind, CloudSun, CloudRainWind } from "lucide-react";
 import { Card } from "./Card";
 import Loader from "./loader";
 
@@ -23,6 +23,7 @@ interface WeatherResponse {
             icon: string;
             text: string;
         }
+        precip_mm: number;
     };
 }
 
@@ -34,11 +35,11 @@ export function Clima() {
     const [umidade, setUmidade] = useState<number | null>();
     const [velocidadeVento, setVelocidadeVento] = useState<number | null>();
     const [sensacaoTermica, setSensacaoTermica] = useState<number | null>();
+    const [precip_mm, setPrecip_mm] = useState<number | null>();
     const [ultimaAtualizacao, setUltimaAtualizacao] = useState("");
     const [data, setData] = useState("");
     const [icon, setIcon] = useState<string | null>();
     const [erro, setErro] = useState("");
-    const [iconDescricao, setIconDescricao] = useState();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isCidade, setIsCidade] = useState(false);
@@ -56,8 +57,13 @@ export function Clima() {
         },
         {
             titulo: "Condição do clima",
-            icon: <Droplet />,
+            icon: <CloudSun />,
             descricao: `${descricao}`
+        },
+        {
+            titulo: "Previsão de Chuva",
+            icon: <CloudRainWind />,
+            descricao: `${precip_mm}%`
         },
     ]
 
@@ -85,6 +91,7 @@ export function Clima() {
             setUmidade(resposta.data.current.humidity);
             setVelocidadeVento(resposta.data.current.wind_kph);
             setSensacaoTermica(resposta.data.current.feelslike_c);
+            setPrecip_mm(resposta.data.current.precip_mm);
             setUltimaAtualizacao(dataFormatadaAtualizada);
             setData(dataFormatadaAtual);
             setIcon(resposta.data.current.condition.icon);
@@ -101,10 +108,6 @@ export function Clima() {
             setIsLoading(false);
         }
 
-    }
-
-    if (descricao == "Sol") {
-        setIconDescricao(<SunMedium />);
     }
 
     return(
@@ -133,10 +136,30 @@ export function Clima() {
             )}
         >
 
+            {!isCidade && (
+                <section className="containerInput">
+
+                    <div className="containerText">
+                        <h1>Clima Tempo</h1>
+                        <p>Busque o clima da sua cidade</p>
+                    </div>
+
+                    <input 
+                        type="text" 
+                        placeholder="Digite a cidade que deseja buscar" 
+                        value={cidade} 
+                        onChange={(e) => setCidade(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') buscarClima();}}                        
+                    />
+                    <button onClick={buscarClima}>Buscar</button>
+
+                </section>
+            )}
+
             {isCidade && (
                 <>
                     {isLoading ? (
-                        <p className="textLoading">Carregando...</p>
+                        <Loader />
                     ) : (
                         <>
                             <section className="containerResult">
@@ -154,7 +177,6 @@ export function Clima() {
                                             </div>
                                         </div>
                                         <p><span>Sensação térmica: </span>{sensacaoTermica}°</p>
-                                        <p><span>Condição: </span>{descricao}</p>
                                         <div className="textData">
                                             <p>{data}</p>
                                             <p className="textAtualizacao"><span>Última atualização: </span>{ultimaAtualizacao}</p>
