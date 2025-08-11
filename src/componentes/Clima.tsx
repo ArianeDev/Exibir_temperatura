@@ -25,11 +25,23 @@ interface WeatherResponse {
         }
         precip_mm: number;
     };
+    forecast: {
+        forecastday: {
+            date: string;
+            day: {
+                maxtemp_c: number;
+                mintemp_c: number;
+                condition: {
+                    icon: string;
+                }
+            }
+        }
+    }
 }
 
 export function Clima() {
     const [cidade, setCidade] = useState("");
-    const [temperatura, setTemperatura] = useState <number | null>();
+    const [temperatura, setTemperatura] = useState<number | null>();
     const [nome_cidade, setNome_cidade] = useState("");
     const [descricao, setDescricao] = useState<string | null>();
     const [umidade, setUmidade] = useState<number | null>();
@@ -39,6 +51,10 @@ export function Clima() {
     const [ultimaAtualizacao, setUltimaAtualizacao] = useState("");
     const [data, setData] = useState("");
     const [icon, setIcon] = useState<string | null>();
+
+    // Pevisão do tempo
+    const [previsaoSemana, setPrevisaoSemana] = useState<WeatherResponse["forecast"]["forecastday"]>([]);
+
     const [erro, setErro] = useState("");
 
     const [isLoading, setIsLoading] = useState(false);
@@ -75,11 +91,12 @@ export function Clima() {
             setIsCidade(true);
             setIsLoading(true);
 
+            // Chave e url da API
             const apiKey = 'b3d53c5b46a54120897161645252907';
-            const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${cidade}&lang=pt`;
+            const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cidade}&lang=pt&days=3`;
 
             const resposta = await axios.get<WeatherResponse>(url);
-
+            
             const dataAtual = resposta.data.location.localtime;
             const dataFormatadaAtual = format(dataAtual, 'dd/MM/yyyy HH:mm');
 
@@ -95,7 +112,8 @@ export function Clima() {
             setUltimaAtualizacao(dataFormatadaAtualizada);
             setData(dataFormatadaAtual);
             setIcon(resposta.data.current.condition.icon);
-            setDescricao(resposta.data.current.condition.text);            
+            setDescricao(resposta.data.current.condition.text);    
+            setPrevisaoSemana(resposta.data.forecast.forecastday);
             setErro('');
 
             setIsCidade(true);
@@ -107,7 +125,6 @@ export function Clima() {
         } finally {
             setIsLoading(false);
         }
-
     }
 
     return(
@@ -185,12 +202,30 @@ export function Clima() {
                                 )}
             
                                 {erro && 
-                                    <p className="textError">{erro}</p>
+                                    <p>{erro}</p>
                                 }
                                 
                             </section>
-                            <section className="containerCard">
-                                <Card list={listCard} />
+
+                            {!erro &&
+                                <section className="containerCard">
+                                    <Card list={listCard} />
+                                </section>
+                            }
+
+                            <section className="containerCardPrevTemp">
+                                {previsaoSemana.map((dia, index) => {
+                                    return (
+                                        <div key={index} className="cardPrevTemp">
+                                            <img src={dia.day.condition.icon} alt="Icone da temperatura do dia" />
+                                            <div>
+                                                <p>{dia.day.maxtemp_c}</p>
+                                                <p>{dia.day.mintemp_c}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+
                             </section>
                         </>
                     )}

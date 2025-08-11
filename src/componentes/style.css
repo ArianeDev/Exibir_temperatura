@@ -1,7 +1,6 @@
 main {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     gap: 1rem;
     height: 100vh;
@@ -175,4 +174,15 @@ p {
     grid-template-columns: repeat(auto-fill, minmax(40%, 2fr));
     gap: 1rem;;
     width: 40%;
+}
+
+/* Card previsão da semana */
+.cardPrevTemp{
+    display: flex;
+    flex-direction: column;
+}
+@media (max-width: 980px)  {
+    .containerResult, .containerCard {
+        width: 80%;
+    }
 }
