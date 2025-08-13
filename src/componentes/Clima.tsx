@@ -93,7 +93,7 @@ export function Clima() {
 
             // Chave e url da API
             const apiKey = 'b3d53c5b46a54120897161645252907';
-            const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cidade}&lang=pt&days=3`;
+            const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cidade}&lang=pt&days=7`;
 
             const resposta = await axios.get<WeatherResponse>(url);
             
@@ -176,7 +176,9 @@ export function Clima() {
             {isCidade && (
                 <>
                     {isLoading ? (
-                        <Loader />
+                        <div className="loader">
+                            <Loader />
+                        </div>
                     ) : (
                         <>
                             <section className="containerResult">
@@ -215,16 +217,25 @@ export function Clima() {
 
                             <section className="containerCardPrevTemp">
                                 {previsaoSemana.map((dia, index) => {
+                                    const data = new Date(dia.date);
+                                    const diaDaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long'});
+                            
                                     return (
                                         <div key={index} className="cardPrevTemp">
-                                            <img src={dia.day.condition.icon} alt="Icone da temperatura do dia" />
-                                            <div>
-                                                <p>{dia.day.maxtemp_c}</p>
-                                                <p>{dia.day.mintemp_c}</p>
+                                            <p className="dayWeeks_cardPrevTemp">{diaDaSemana}</p>
+                                            <div className="icon">
+                                                <img src={dia.day.condition.icon} alt="Icone da temperatura do dia" />
+                                            </div>
+                                            <div className="text_cardPrevTemp">
+                                                <p className="text_maxtemp">{dia.day.maxtemp_c}°</p>
+                                                <p className="text_mintemp">{dia.day.mintemp_c}°</p>
                                             </div>
                                         </div>
                                     )
                                 })}
+                                {Array.from({length: Math.max(0, 7 - previsaoSemana.length)}).map((_, key) => (
+                                    <div className="cardPrevTemp"></div>
+                                ))}
 
                             </section>
                         </>

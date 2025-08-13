@@ -6,6 +6,13 @@ main {
     height: 100vh;
 }
 
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
 .FundoAzul {
     background: linear-gradient(20deg, rgb(5, 0, 80), rgb(0, 32, 138));
 }
@@ -106,10 +113,11 @@ button {
     flex-direction: column;
     border-radius: 0.5rem;
     padding: 2rem;
-    width: 40%;
+    width: 50%;
     color: rgb(255, 255, 255);
     background-color: rgba(194, 194, 194, 0.3);
     box-shadow: 5px 5px 5px rgba(49, 49, 49, 0.4);
+    margin-top: 1rem;
 }
 
 .containerTemperatura_header {
@@ -173,16 +181,60 @@ p {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(40%, 2fr));
     gap: 1rem;;
-    width: 40%;
+    width: 50%;
 }
 
 /* Card previsão da semana */
-.cardPrevTemp{
-    display: flex;
-    flex-direction: column;
+.containerCardPrevTemp {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12%, 7fr));
+    gap: 1rem;
+    width: 50%;
+
+    & .cardPrevTemp{
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        border-radius: 0.5rem;
+        background-color: rgba(194, 194, 194, 0.3);
+        box-shadow: 5px 5px 5px rgba(49, 49, 49, 0.4);
+        padding: 1rem;
+
+        & .dayWeeks_cardPrevTemp {
+            color: white;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+            text-align: center;
+            margin: 0;
+        }
+    
+        & img {
+            width: 3rem;
+        }
+        
+        & .text_cardPrevTemp {
+            display: flex;
+            justify-content: space-between;
+            
+            & .text_maxtemp, .text_mintemp {
+                font-size: 0.8rem;
+                color: rgb(235, 235, 235);
+            }
+        }
+    }
 }
+
+
 @media (max-width: 980px)  {
-    .containerResult, .containerCard {
-        width: 80%;
+    .containerResult, .containerCard, .containerCardPrevTemp {
+        width: 90%;
+    }
+
+    .containerCardPrevTemp {
+        & .cardPrevTemp{
+            & .dayWeeks_cardPrevTemp {
+                font-size: 0.6rem;
+            }         
+        }
     }
 }
